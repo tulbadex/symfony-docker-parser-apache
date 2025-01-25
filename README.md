@@ -11,9 +11,9 @@ This project is a Symfony-based application designed to parse and process variou
 
 ## Requirements
 
-- PHP 7.4 or higher
+- PHP 7.4
 - Composer
-- Symfony 5.0 or higher
+- Symfony 5.0
 
 ## Installation
 
