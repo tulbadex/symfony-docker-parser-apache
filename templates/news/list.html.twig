@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for news in newsItems %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{{ news.picture }}" class="card-img-top" alt="{{ news.title }}" loading="lazy">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ news.title }}</h2>
+                            <p class="card-text">{{ news.shortDescription }}</p>
+                            <p class="card-text"><small class="text-muted">Date added: {{ news.createdAt|date('Y-m-d H:i:s') }}</small></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <nav aria-label="News pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if previousPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('news_list', {page: previousPage}) }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for i in 1..pagination.totalPages %}
+                    <li class="page-item {{ i == pagination.currentPage ? 'active' : '' }}">
+                        <a class="page-link" href="{{ path('news_list', {page: i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if nextPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('news_list', {page: nextPage}) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

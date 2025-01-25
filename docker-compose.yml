@@ -1,0 +1,74 @@
+services:
+  app:
+    build: ./docker/php
+    volumes:
+      - .:/var/www/html:cached
+      - ./docker/apache.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - 9000:80
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - backend
+    hostname: myapp.local
+    env_file: 
+      - .env
+
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    restart: unless-stopped
+    volumes:
+      - ./data/conf.d:/etc/mysql/conf.d
+      - ./data/logs:/logs
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_CHARSET: ${DATABASE_CHARSET}
+      MYSQL_COLLATION: ${DATABASE_COLLATION}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      # test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DATABASE_USER}", "-p${DATABASE_PASSWORD}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: ${PMA_HOST}
+      PMA_USER: ${PMA_USER}
+      PMA_PASSWORD: ${PMA_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+    ports:
+      - "8080:80"
+    networks:
+      - backend
+    depends_on:
+      - mysql
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend
+
+volumes:
+  db_data:
+  mysql_volume:
+
+networks:
+  backend:
+    driver: bridge

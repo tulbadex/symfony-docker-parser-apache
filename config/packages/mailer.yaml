@@ -1,0 +1,9 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: 'tulbadex@gmail.com'
+        headers:
+            From: 'Tulbadex Parser Project <tulbadex@gmail.com>'
+            Bcc: 'baz@example.com'
+            X-Custom-Header: 'foobar'

@@ -1,0 +1,2 @@
+# Run news parser every minute
+* * * * * cd /var/www/html && /usr/local/bin/php bin/console app:parse-news --env=prod >> /var/log/cron.log 2>&1

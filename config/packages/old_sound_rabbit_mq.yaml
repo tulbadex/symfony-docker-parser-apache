@@ -1,0 +1,16 @@
+old_sound_rabbit_mq:
+    connections:
+        default:
+            url: '%env(RABBITMQ_URL)%'
+    producers:
+       # use 'old_sound_rabbit_mq.task_producer' service to send data.
+       task:
+           connection:       default
+           exchange_options: { name: 'news', type: direct }
+    consumers:
+       task:
+           connection:       default
+           exchange_options: { name: 'news', type: direct }
+           queue_options:    { name: 'news'}
+        #    callback:         App\Consumer\NewsConsumer
+           callback:         App\Service\NewsParser

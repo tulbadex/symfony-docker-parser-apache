@@ -1,0 +1,363 @@
+# Stop and Remove Existing Containers
+docker-compose down --volumes --remove-orphans
+
+# Rebuild and Start Containers
+docker-compose up -d
+docker-compose up -d --build
+
+# Check Container Status
+docker ps
+# list all container include the exited one
+docker ps -a
+# also we can user, which i found out best
+docker-compose ps
+
+# Run command with docker to create database and best
+docker exec -it <container_id> php bin/console doctrine:database:create
+# Another way to run command in docker
+docker exec <container_id> bash -c "php bin/console make:migration"  
+docker exec <container_id> bash
+docker-compose exec <container_name> bash
+mysql -uroot -padmin
+# make migration
+docker exec -it <container_id> php bin/console make:migration
+docker-compose exec <container_name> php bin/console make:migration
+docker-compose exec <container_name> php bin/console doctrine:migrations:migrate
+
+# Build without looking at cahce
+docker-compose build --no-cache
+
+# to enter php console mode
+docker exec -it a6f45ba6b496 /bin/bash
+docker-compose exec app /bin/bash
+
+# log container
+docker-compose logs
+docker-compose logs app
+
+# execute mysql command inside container
+docker-compose exec mysql mysql -u root --password=admin
+docker exec -it mysql mysql -u root -p
+docker-compose exec app /bin/bash
+# show databse
+show databases;
+# to get all user from mysql
+select user.host from mysql.user;
+# create database
+create database parser;
+use parser;
+show tables;
+desc table_name;
+
+# to access the mysql using the mysql variable
+mysql -u root -P 3307 -h 127.0.0.1 -p
+
+# create voume for persist data in case showutdown
+docker volume create mysql_volume
+# to inspect created volume 
+docker volume inspect mysql_volume
+# to check all volume
+docker volume ls
+
+# image can be install using 
+docker pull php:7.4-apache
+# to run the image
+docker run -it --name php_cont php:7.4-apache /bin/bash
+# to list docker images
+docker images
+
+#remove and delete images
+docker ps -a
+docker stop <docker_id>
+docker rm <image_name>
+
+# run console command for cli
+docker-compose exec app php bin/console app:parse-news
+
+# Remove All Stopped Containers, Unused Networks, and Build Cache and volumes
+gi
+# Clearing Docker Build Cache
+docker builder prune
+
+# show the cron log
+cat /var/log/cron.log
+# tail log to see live log
+tail -f /var/log/cron.log
+# clear cache
+php bin/console cache:clear
+mysql -h mysql -u tulbadex -padmin parser
+# check cron permission
+ls -l /var/log/cron.log
+ls -l /etc/cron.d/news-parser-cron
+# view active cron tab
+crontab -l
+# check cron process
+ps aux | grep cron
+# You can monitor the initialization process through the container logs
+docker-compose logs -f app
+# create a databse from .env if it doesn't exist
+php bin/console d:d:c
+# check the amq messenger
+php bin/console messenger:consume async -vv
+# show supervisor status
+docker-compose exec php supervisorctl status
+docker-compose exec php tail -f /var/log/supervisord.log
+
+### Symfony
+
+# install scoop installer
+scoop install symfony-cli
+# install symphony version 5.4 with installer
+symfony new --webapp --dir=.--version=5.4
+symfony new --webapp --dir='.' --version=5.4
+# using composer
+composer create-project symfony/skeleton:"^5.4" my_project_directory
+# start symfony app
+symfony server:start     
+# to stop symfony app
+symfony server:stop
+# check requiremnets
+symfony check:requirements
+# show docker environmental variable
+symfony serve
+symfony serve -d
+# expose environmental vraibles
+symfony var:export --multiline
+# install tls certificate
+symfony server:ca:install
+# using symfony console
+symfony console   
+# install doctrine
+composer require symfony/orm-pack
+composer require --dev symfony/maker-bundle
+# create database using symfony
+symfony console doctrine:database:create
+
+# Git
+# to show differences in the current .env after additional input
+git diff .env
+
+# adding composer to docker
+# Open PowerShell Profile
+$PROFILE
+# Open file in text editor
+notepad $PROFILE
+# Add the following function to your PowerShell profile
+function Invoke-Composer {
+    param (
+        [Parameter(Mandatory=$true)]
+        [string[]]$Args
+    )
+    docker-compose run --rm app composer $Args
+}
+
+function composer {
+    Invoke-Composer -Args $args
+}
+# reload powershell
+. $PROFILE
+
+# i remove this from the global
+function Invoke-Composer {
+    param (
+        [Parameter(Mandatory=$true)]
+        [string[]]$Args
+    )
+    docker-compose run --rm app composer $Args
+}
+
+function composer {
+    Invoke-Composer -Args $args
+}
+# and install composer globally
+
+
+# task question
+Create a new parsing service from a news resource, for example, http://highload.today.  ( https://highload.today/category/novosti/ )
+The service must have a page displaying the list of downloaded news and a CLI command
+to start parsing.
+Parsing features:
+- from each article, the download should be saved:
+- title
+- short description
+- picture
+- date added
+- when parsing, it is necessary to check the presence of the title in the database, and if
+the news is already in the database, make a note about the date and time of the last
+update
+- database queries should be optimized for heavy load
+- parsing should be in several parallel processes (via rabbitMQ)
+- parsing must be run via cron
+Features of the page for viewing news from the database:
+- the page for viewing news from the database should be available only after
+authorization in the system (registration is not required)
+- Authorized users can be with one of two roles: admin or moderator (the administrator
+can delete articles)
+- there must be pagination at the end of the list of articles (10 per page)
+Stack:
+- Symfony 5.4
+- Php 7.4
+- Mysql
+- Bootstrap 5.1
+- Docker (docker-compose)
+- RabbitMQ
+
+
+VC_2013_REDIST_X64 - Visual C++ 2013 x64 Update 5 - 12.0.40664
+VC_2012_REDIST_X64 - Visual C++ 2012 x64 Minimum Update 4 - 11.0.61030
+
+
+
+
+
+
+
+
+
+# Initial setup
+
+## Create proect directory
+```bash
+mkdir news-parser
+cd news-parser
+```
+## Install Symfony
+```bash 
+composer create-project symfony/website-skeleton:5.4.* .
+```
+
+## Install Additional Dependencies If Not Yet Installed
+```bash 
+composer require symfony/security-bundle
+composer require symfony/form
+composer require symfony/validator
+composer require symfony/messenger
+composer require symfony/amqp-messenger
+composer require php-amqplib/php-amqplib
+composer require symfony/twig-bundle
+composer require symfony/asset
+composer require symfony/dom-crawler
+composer require symfony/http-client
+composer require --dev symfony/profiler-pack
+composer require symfony/rate-limiter
+composer require sensio/framework-extra-bundle
+```
+
+## Project Structure
+
+news-parser/
+├── docker/
+│   ├── nginx/
+│   │   └── default.conf
+│   └── php/
+│       └── Dockerfile
+├── src/
+│   ├── Command/
+│   ├── Controller/
+│   ├── Entity/
+│   ├── Repository/
+│   ├── Security/
+│   └── Service/
+├── templates/
+├── .env
+├── docker-compose.yml
+└── symfony.lock
+
+## Configuration Environment
+Create .env.local
+
+## Database Setup
+Create migration:
+```bash
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+```
+
+## to install amq
+Check if your php version is thread safe or non thread safe
+```bash
+php -i|findstr "Thread"
+```
+Next, proceed:
+
+1. Download the right version of the extension https://pecl.php.net/package/amqp
+2. After download, copy rabbitmq.4.dll and rabbitmq.4.pdb files to PHP root folder and copy php_amqp.dll and php_amqp.pdb files to PHP\ext folder
+3. Add extension=amqp to the php.ini file
+4. Check if is everything OK with php -m
+
+## Configure Cron Job
+Create config/packages/messenger.yaml
+
+## Now for the Docker commands to start and run the project:
+1. First, make sure you're in the project root directory
+2. Build and start the containers:
+```bash
+# First time build
+docker-compose build
+
+# Start the containers
+docker-compose up -d
+
+# Check the status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+```
+3. Set up the database and load fixtures
+```bash
+# Enter PHP container
+docker-compose exec php bash
+
+# Inside the container:
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load
+```
+
+Make sure all files have Unix line endings (LF instead of CRLF). If you're using Windows, you might need to configure Git to handle this:
+
+```bash
+git config --global core.autocrlf false
+```
+
+## Then, in your project directory, run:
+```bash
+# Remove old containers and images
+docker-compose down -v
+docker-compose down --volumes --remove-orphans
+docker-compose rm -f
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+## Show required extensions
+```bash
+docker-compose exec php php -m
+```
+
+docker-compose exec php php bin/console app:create-user test@example.com password123 user
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:schema:update --force
+## down migration by empting the table or removing
+php bin/console doctrine:migrations:migrate first -n
+docker-compose exec php php bin/console doctrine:migrations:migrate first -n
+## run new migration
+php bin/console make:migration
+## upgrade the database or creating
+php bin/console doctrine:migration:migrate -n
+## drop database
+to drop all the migrations. Then, make sure you don't have important data you care about in your local database, then drop its schema completely with:
+docker-compose exec php bin/console doctrine:schema:drop --force
+
+The bundle provides one more command that helps to "roll up" the migrations by deleting all tracked versions and insert the one version that exists:
+symfony console doctrine:migrations:rollup
+
+docker-compose exec php php bin/console doctrine:migrations:execute --up "DoctrineMigrations\Version20250121194039"
+
+php bin/console doctrine:schema:update -f
+
+## to drop table
+1. schema drop
+2. clear cache
+3. clear warmup
+4. schema update
